@@ -9,7 +9,6 @@ module.exports = yeoman.generators.Base.extend({
         this.paths();
     },
     prompting: {
-
         promptReadme: function () {
             var done = this.async();
             // Have Yeoman greet the user.
@@ -58,9 +57,11 @@ module.exports = yeoman.generators.Base.extend({
                     },
                     {
                         name: "models(you may not choose the option if the code not complicated)",
+                        value: 'models'
                     },
                     {
                         name: "controllers(you may not choose the option if the code not complicated)",
+                        value: 'controllers'
                     },
                     {
                         name: "templates"
@@ -72,12 +73,49 @@ module.exports = yeoman.generators.Base.extend({
                         name: "core"//an application core
                     }
                 ],
-                name: 'js folders',
+                name: 'arrJsFolders',
+                message: 'Would you like to divide js folders? Press space key to choose',
+            }];
+            this.prompt(prompts, function (props) {
+                this.arrJsFolders = props.arrJsFolders;
+                this.log(props, arguments.length)
+                done();
+            }.bind(this));
+        },
+        promptLibraryFolder: function () {
+            var done = this.async();
+            var prompts = [{
+                type: 'checkbox',
+                choices: [
+                    new inquirer.Separator("The usual library modules:"),
+                    {
+                        name: "jQuery(It makes things like HTML document traversal and manipulation, event handling, animation, and Ajax much simpler with an easy-to-use API that works across a multitude of browsers)",
+                        value:'jquery',
+                        checked: true
+                    },
+                    {
+                        name: "jQuery UI(a curated set of user interface interactions, effects, widgets, and themes built on top of the jQuery JavaScript Library)",
+                        value:'jquery-ui'
+                    },
+                    {
+                        name: "Backbone(gives structure to web applications by providing models with key-value binding and custom events, collections with a rich API of enumerable functions, views with declarative event handling, and connects it all to your existing API over a RESTful JSON interface)",
+                        value:'backbone'
+                    },
+                    {
+                        name: "jQuery.loadTemplate(jQuery Template is a jQuery plugin that makes using templates easy and quick)",
+                        value:'jquery-load-template'
+                    },
+                    {
+                        name: "core(default core library is RequireJs, RequireJS is a JavaScript file and module loader)",//http://requirejs.org/docs/optimization.html#mainConfigFile
+                        value:'requirejs'
+                    }
+                ],
+                name: 'arrJsLibraries',
                 message: 'Would you like to divide js folders? Press space key to choose',
                 default: true
             }];
             this.prompt(prompts, function (props) {
-                this.someOption = props.someOption;
+                this.arrJsLibraries = props.arrJsLibraries;
                 done();
             }.bind(this));
         },
@@ -117,54 +155,11 @@ module.exports = yeoman.generators.Base.extend({
                 done();
             }.bind(this));
         },
-        promptLibraryFolder: function () {
-            var done = this.async();
-            var prompts = [{
-                type: 'checkbox',
-                choices: [
-                    new inquirer.Separator("The usual library modules:"),
-                    {
-                        name: "jQuery(It makes things like HTML document traversal and manipulation, event handling, animation, and Ajax much simpler with an easy-to-use API that works across a multitude of browsers)",
-                        checked: true
-                    },
-                    {
-                        name: "jQuery UI(a curated set of user interface interactions, effects, widgets, and themes built on top of the jQuery JavaScript Library)",
-                    },
-                    {
-                        name: "forms"
-                    },
-                    {
-                        name: "buttons",
-                    },
-                    {
-                        name: "tables"
-                    },
-                    {
-                        name: "menus",
-                    }
-                ],
-                name: 'js folders',
-                message: 'Would you like to divide js folders? Press space key to choose',
-                default: true
-            }];
-            this.prompt(prompts, function (props) {
-                this.someOption = props.someOption;
-                done();
-            }.bind(this));
-        }
+
     },
     writing: {
         app: function () {
             this.gruntfile.insertConfig("readme", "{}");
-            this.mkdir('/generator-common-modules/app');
-            this.fs.copy(
-                this.templatePath('_package.json'),
-                this.destinationPath('package.json')
-            );
-            this.fs.copy(
-                this.templatePath('_bower.json'),
-                this.destinationPath('bower.json')
-            );
         },
         projectfiles: function () {
             this.fs.copy(
@@ -181,10 +176,9 @@ module.exports = yeoman.generators.Base.extend({
         if (this.hasReadMe) {
             //this.npmInstall(['grunt-readme'], {'saveDev': true});
         }
-        if(this.hasGrunt){
+        if (this.hasGrunt) {
             //this.npmInstall(['grunt-cli'], {'saveDev': false});
             //this.npmInstall(['grunt'], {'saveDev': true});
-
         }
     },
     paths: function () {
@@ -192,5 +186,12 @@ module.exports = yeoman.generators.Base.extend({
         // returns '~/projects'
         this.destinationPath('index.js');
         // returns '~/projects/index.js'
+    },
+    end: function (data) {
+        var targetPath = 'generator-common-modules/app/js/';
+        this.arrJsFolders.push("views");
+        for (var i = 0; i < this.arrJsFolders.length; i++) {
+            this.mkdir(targetPath + this.arrJsFolders[i]);
+        }
     }
 });
