@@ -89,25 +89,25 @@ module.exports = yeoman.generators.Base.extend({
                 choices: [
                     new inquirer.Separator("The usual library modules:"),
                     {
-                        name: "jQuery(It makes things like HTML document traversal and manipulation, event handling, animation, and Ajax much simpler with an easy-to-use API that works across a multitude of browsers)",
-                        value:'jquery',
+                        name: "jQuery(provides an easy-to-use API that works across a multitude of browsers)",
+                        value: 'jquery',
                         checked: true
                     },
                     {
-                        name: "jQuery UI(a curated set of user interface interactions, effects, widgets, and themes built on top of the jQuery JavaScript Library)",
-                        value:'jquery-ui'
+                        name: "jQuery UI(a curated set of user interface)",
+                        value: 'jquery-ui'
                     },
                     {
-                        name: "Backbone(gives structure to web applications by providing models with key-value binding and custom events, collections with a rich API of enumerable functions, views with declarative event handling, and connects it all to your existing API over a RESTful JSON interface)",
-                        value:'backbone'
+                        name: "Backbone(gives structure to your existing API, undersore lib would install automatically)",
+                        value: 'backbone'
                     },
                     {
-                        name: "jQuery.loadTemplate(jQuery Template is a jQuery plugin that makes using templates easy and quick)",
-                        value:'jquery-load-template'
+                        name: "jQuery.loadTemplate(makes using templates easy and quick)",
+                        value: 'jquery-load-template'
                     },
                     {
-                        name: "core(default core library is RequireJs, RequireJS is a JavaScript file and module loader)",//http://requirejs.org/docs/optimization.html#mainConfigFile
-                        value:'requirejs'
+                        name: "core(default core library is RequireJs)",//http://requirejs.org/docs/optimization.html#mainConfigFile
+                        value: 'requirejs'
                     }
                 ],
                 name: 'arrJsLibraries',
@@ -119,57 +119,37 @@ module.exports = yeoman.generators.Base.extend({
                 done();
             }.bind(this));
         },
-        promptCssDivision: function () {
+        //promptDistributeJsFiles: function () {
+        //    var done = this.async();
+        //    var prompts = [{
+        //        type: 'confirm',
+        //        name: 'isDistributeFiles',
+        //        message: 'Would you like to enable to copy js library mini files to relevant folders?',
+        //        default: true
+        //    }];
+        //    this.prompt(prompts, function (props) {
+        //        this.log(props.grunt)
+        //        this.isDistributeFiles = props.isDistributeFiles;
+        //        done();
+        //    }.bind(this));
+        //},
+        promptCssLibrary: function () {
             var done = this.async();
             var prompts = [{
-                type: 'checkbox',
-                choices: [
-                    new inquirer.Separator("The usual CSS modules:"),
-                    {
-                        name: "base",
-                        checked: true,
-                        disabled: 'forced choice'
-                    },
-                    {
-                        name: "grids",
-                    },
-                    {
-                        name: "forms"
-                    },
-                    {
-                        name: "buttons",
-                    },
-                    {
-                        name: "tables"
-                    },
-                    {
-                        name: "menus",
-                    }
-                ],
-                name: 'js folders',
-                message: 'Would you like to divide js folders? Press space key to choose',
+                type: 'confirm',
+                name: 'hasPure',
+                message: 'Would you like to download css library pure?',
                 default: true
             }];
             this.prompt(prompts, function (props) {
-                this.someOption = props.someOption;
+                this.hasPure = props.hasPure;
                 done();
             }.bind(this));
         },
-
     },
     writing: {
         app: function () {
             this.gruntfile.insertConfig("readme", "{}");
-        },
-        projectfiles: function () {
-            this.fs.copy(
-                this.templatePath('editorconfig'),
-                this.destinationPath('.editorconfig')
-            );
-            this.fs.copy(
-                this.templatePath('jshintrc'),
-                this.destinationPath('.jshintrc')
-            );
         }
     },
     install: function () {
@@ -179,6 +159,13 @@ module.exports = yeoman.generators.Base.extend({
         if (this.hasGrunt) {
             //this.npmInstall(['grunt-cli'], {'saveDev': false});
             //this.npmInstall(['grunt'], {'saveDev': true});
+        }
+        if (this.arrJsLibraries.length) {
+            //for(var i=0;i<this.arrJsLibraries.length;i++)
+            //this.bowerInstall(this.arrJsLibraries[i])
+        }
+        if(this.hasPure){
+            this.bowerInstall('pure')
         }
     },
     paths: function () {
@@ -193,5 +180,25 @@ module.exports = yeoman.generators.Base.extend({
         for (var i = 0; i < this.arrJsFolders.length; i++) {
             this.mkdir(targetPath + this.arrJsFolders[i]);
         }
+        //if (this.isDistributeFiles) {
+        //    var libraryFolder = 'generator-common-modules/app/js/libraries';
+        //    var arrSourceFiles = [
+        //        'bower_components/jquery/dist/jquery.min.js',
+        //        'bower_components/backbone/backbone.js',
+        //        'bower_components/jquery-load-template/jquery-loadTemplate/jquery.loadTemplate-1.4.5.min.js',
+        //        'bower_components/requirejs/require.js',
+        //        'bower_components/underscore/underscore-min.js'
+        //    ];
+        //    for (var i = 0; i < arrSourceFiles.length; i++) {
+        //        this.copy(
+        //            arrSourceFiles[i],
+        //            libraryFolder
+        //        );
+        //    }
+        //    this.directory(
+        //        'bower_components/jquery-ui',
+        //        libraryFolder
+        //    );
+        //}
     }
 });
