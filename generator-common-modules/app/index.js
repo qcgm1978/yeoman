@@ -156,7 +156,7 @@ module.exports = yeoman.generators.Base.extend({
     writing: {
         app: function () {
             this.gruntfile.insertConfig("readme", "{}");
-            this.mkdir('app/scss/modules/tables');
+            this.mkdir('/generator-common-modules/app');
             this.fs.copy(
                 this.templatePath('_package.json'),
                 this.destinationPath('package.json')
@@ -179,11 +179,11 @@ module.exports = yeoman.generators.Base.extend({
     },
     install: function () {
         if (this.hasReadMe) {
-            this.npmInstall(['grunt-readme'], {'saveDev': true});
+            //this.npmInstall(['grunt-readme'], {'saveDev': true});
         }
         if(this.hasGrunt){
-            this.npmInstall(['grunt-cli'], {'saveDev': false});
-            this.npmInstall(['grunt'], {'saveDev': true});
+            //this.npmInstall(['grunt-cli'], {'saveDev': false});
+            //this.npmInstall(['grunt'], {'saveDev': true});
 
         }
     },
